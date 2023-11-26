@@ -1,0 +1,1 @@
+/usr/lib/ccache/cc CMakeFiles/my_executable_name.dir/src/main.c.o -o my_executable_name 

@@ -2,8 +2,9 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define NUM_THREADS 4
+#define NUM_THREADS 1
 
 double x, pi, step, sum = 0.0;
 
@@ -39,6 +40,11 @@ void *pi_approx(void *arg)
 
 int main(int argc, char *argv[])
 {
+	clock_t start, end;
+	double cpu_time_used;
+
+	start = clock();
+
 	pthread_t thread_id[NUM_THREADS];
 	thread_data thread_args[NUM_THREADS];
 
@@ -67,6 +73,11 @@ int main(int argc, char *argv[])
 	printf("Calculated value of PI = %.15f\n", pi);
 
 	pthread_barrier_destroy(&barrier);
+
+	end = clock();
+	cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+	printf("Program executed in: %f seconds\n", cpu_time_used);
 
 	return 0;
 }

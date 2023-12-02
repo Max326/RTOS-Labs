@@ -1,14 +1,79 @@
+// lab5 assignment 1
 #include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 
-struct thread_data{
+#define NUM_THREADS 8
+
+typedef struct{
 	int cnt;
 	int sum;
 	const char *msg;
-};
+} thread_data; // this way you can initialize struct objects without using the struct keyword
 
+// or
+// struct thread_data{
+// 	int cnt;
+// 	int sum;
+// 	const char *msg;
+// };
 
+void* start_routine(void *arg){
+	thread_data *data = (thread_data *)arg;
+
+	printf("thread %d: %s, sum = %d\n", data->cnt, data->msg, data->sum);
+
+	// int cnt = data->cnt;
+	//	cnt = (*data).cnt; same as above
+	usleep(1000); // otherwise the values were overwriting themselves
+
+	pthread_exit((void*) data->cnt);
+}
 
 int main(){
+	int i, sum, rc;
+
+	pthread_t thread_id[NUM_THREADS];
+
+	void *status;
+
+	char *msg[NUM_THREADS] = {
+		"english",
+		"french",
+		"spanish",
+		"polish",
+		"german",
+		"russian",
+		"turkish",
+		"portuguese"
+	};
+	
+	for (i = 0; i < NUM_THREADS; i++){
+		sum += 1;
+		thread_data temp = {i, sum, msg[i]}; // why
+		rc = pthread_create(&thread_id[i], NULL, &start_routine, (void *)&temp);
+		
+		if (rc){
+			printf("error, rc= %d\n", rc);
+			exit(1);
+		}
+		// thread_data *data = &td[i];
+	}
+
+	// joining threads
+
+	for (i = 0; i < NUM_THREADS; i++){
+		rc = pthread_join(thread_id[i], &status);
+		if (rc){
+			printf("joining error, rc= %d\n", rc);
+			exit(1);
+		}
+		printf("thread %d joined main thread with status: %d\n", i, (int)status); 
+	}
+
+	printf("main thread finished, exiting...\n");
+	pthread_exit(NULL);
 	return 0;
 }
 

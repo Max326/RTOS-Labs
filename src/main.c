@@ -40,14 +40,15 @@ int main() {
 	sum = 0.0;
 
 	pthread_t thread_id[NUM_THREADS];
-	// // fifo set here
-	// pthread_attr_t attr;
-	// struct sched_param param;
-	// pthread_attr_init(&attr);
-	// pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
-	// param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-	// pthread_attr_setschedparam(&attr, &param);
-	// // end of fifo setting here
+	
+	// scheduling set here
+	pthread_attr_t attr;
+	struct sched_param param;
+	pthread_attr_init(&attr);
+	pthread_attr_setschedpolicy(&attr, SCHED_RR);
+	param.sched_priority = sched_get_priority_max(SCHED_RR);
+	pthread_attr_setschedparam(&attr, &param);
+	// end of schedule setting here
 
 	void *status;
 
@@ -65,7 +66,7 @@ int main() {
 
 		*temp = (thread_data) {iter, iter + range};
 
-		rc = pthread_create(&thread_id[i], NULL, &start_routine, (void *)temp);
+		rc = pthread_create(&thread_id[i], &attr, &start_routine, (void *)temp);
 
 		if(rc) {
 			printf("error, rc= %d\n", rc);
@@ -91,7 +92,7 @@ int main() {
 
 	pthread_exit(NULL);
 
-	// pthread_attr_destroy(&attr);
+	pthread_attr_destroy(&attr);
 
 	return 0;
 }

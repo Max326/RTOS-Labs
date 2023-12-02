@@ -14,3 +14,7 @@ add_executable(my_executable_name ${SOURCE_FILES})
 
 # Link any libraries if necessary
 # target_link_libraries(my_executable_name name_of_library)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/ubuntu/Projects/threads/src/main.c" "CMakeFiles/my_executable_name.dir/src/main.c.o" "gcc" "CMakeFiles/my_executable_name.dir/src/main.c.o.d"
+  "/home/ubuntu/Projects/RTOS-Labs/src/main.c" "CMakeFiles/my_executable_name.dir/src/main.c.o" "gcc" "CMakeFiles/my_executable_name.dir/src/main.c.o.d"
   )
 
 # Targets to which this target links.

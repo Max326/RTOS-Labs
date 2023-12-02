@@ -1,118 +1,97 @@
-// lab5 assignment 1
+// lab5 assignment 2
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <unistd.h>
 
-#define NUM_THREADS 8
+#define NUM_THREADS 100
+int num_steps = 1000;
+double step, pi, sum, range;
 
-typedef struct{
-	int cnt;
-	int sum;
-	const char *msg;
-} thread_data; // this way you can initialize struct objects without using the struct keyword
+typedef struct {
+	int x0;
+	int x1;
+} thread_data;	// this way you can initialize struct objects without using the struct keyword
 
 // or
 // struct thread_data{
-// 	int cnt;
-// 	int sum;
+// 	int x0;
+// 	int x1;
 // 	const char *msg;
 // };
 
-void* start_routine(void *arg){
+void *start_routine(void *arg) {
 	thread_data *data = (thread_data *)arg;
 
-	printf("thread %d: %s, sum = %d\n", data->cnt, data->msg, data->sum);
+	int i;
+	double x;
 
-	// usleep(5000); // otherwise the values were overwriting themselves
+	for(i = data->x0; i < data->x1; i++) {
+		x = (double)(i + 0.5) * step;
+		sum = sum + 4.0 / (1.0 + x * x);
+	}
 
-	int ret = data->cnt;
 	free(arg);
-	pthread_exit((void*) ret);
+	return NULL;
 }
 
-int main(){
-	int i, sum, rc;
-	sum = 0;
+int main() {
+	int i, rc;
+	sum = 0.0;
 
 	pthread_t thread_id[NUM_THREADS];
-	
-	pthread_attr_t attr;
-	struct sched_param param;
-
-	pthread_attr_init(&attr);
-	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
-
-	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-    pthread_attr_setschedparam(&attr, &param);
-
+	// // fifo set here
+	// pthread_attr_t attr;
+	// struct sched_param param;
+	// pthread_attr_init(&attr);
+	// pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+	// param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	// pthread_attr_setschedparam(&attr, &param);
+	// // end of fifo setting here
 
 	void *status;
 
-	char *msg[NUM_THREADS] = {
-		"english",
-		"french",
-		"spanish",
-		"polish",
-		"german",
-		"russian",
-		"turkish",
-		"portuguese"
-	};
-	
-	for (i = 0; i < NUM_THREADS; i++){
+	double threads = NUM_THREADS;
+
+	range = num_steps / threads;
+
+	step = 1.0 / (double)(num_steps);
+
+	double iter;
+	iter = 0;
+
+	for(i = 0; i < NUM_THREADS; i++) {
 		thread_data *temp = malloc(sizeof(thread_data));
 
-		*temp = (thread_data){i, sum, msg[i]}; 
+		*temp = (thread_data) {iter, iter + range};
 
-		rc = pthread_create(&thread_id[i], &attr, &start_routine, (void *)temp);
+		rc = pthread_create(&thread_id[i], NULL, &start_routine, (void *)temp);
 
-		if (rc){
+		if(rc) {
 			printf("error, rc= %d\n", rc);
 			exit(1);
 		}
 
-		sum += 1;
-
-		// thread_data *data = &td[i];
+		iter += range;
 	}
 
 	// joining threads
 
-	for (i = 0; i < NUM_THREADS; i++){
+	for(i = 0; i < NUM_THREADS; i++) {
 		rc = pthread_join(thread_id[i], &status);
-		if (rc){
+		if(rc) {
 			printf("joining error, rc= %d\n", rc);
 			exit(1);
 		}
-		printf("thread %d joined main thread with status: %d\n", i, (int)status); 
 	}
 
-	printf("main thread finished, exiting...\n");
+	pi = step * sum;
+
+	printf("PI = %.15f\n", pi);
+
 	pthread_exit(NULL);
 
-	pthread_attr_destroy(&attr);
+	// pthread_attr_destroy(&attr);
 
 	return 0;
 }
-
-// int num_steps = 100000;
-
-
-// int main ()
-// {
-// 	int i;
-// 	double x, pi, step, sum = 0.0;
-
-// 	step = 1.0 / (double) num_steps;
-// 	for (i=0; i < num_steps; i++)
-// 	{
-// 		x = (double)(i + 0.5) * step;
-// 		sum = sum + 4.0 / (1.0 + x * x);
-// 	}
-// 	pi = step * sum;
-
-// 	printf("PI = %.15f\n", pi);
-
-// 	return 0;
-// }

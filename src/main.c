@@ -1,4 +1,4 @@
-// lab4 assignment 2
+// lab4 assignment 3
 
 #include <sched.h>
 #include <signal.h>
@@ -9,48 +9,35 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-	int fork_pid;
-	int i, res, status;
+	int t[] = {10, 5, 3, 8, 9};
 
-	if (argc < 2) {
-		fprintf(stderr, "Usage: %s <path_to_executable> [args_for_executable]\n", argv[0]);
-        return EXIT_FAILURE;
+	int fork_pid[5];
+
+	int i, j, res, status;
+
+	for(i = 0; i < 5; i++) {
+		fork_pid[i] = fork();
+
+		if(fork_pid[i] == -1) {
+			perror("forking failed\n");
+			return EXIT_FAILURE;
+		} else if(fork_pid[i] == 0) {
+			for(j = 0; j < t[i]; j++) {
+				printf("\tpid = %d, ppid = %d, process number: %d, step: %d\n", getpid(), getppid(), i, j);
+				usleep(100000);
+			}
+			printf("Child pid = %d finished with status = %d\n", getpid(), WEXITSTATUS(status));
+			exit(EXIT_SUCCESS);
+		} else {
+			printf("parent pid = %d\n", getpid());
+		}
 	}
 
-	fork_pid = fork();
-
-	if(fork_pid == -1) {
-		perror("forking failed\n");
-		return EXIT_FAILURE;
-	} else if(fork_pid == 0) {
-		printf("pid = %d, ppid = %d\n", getpid(), getppid());
-
-		// res = spawnl(WNOWAIT, "/home/max/Projects/RTOS-exec-test/build/my_executable_name", "my_executable_name", "10", NULL); this should work during labs
-
-		// here's running it without weird stuff:
-		// res = execl("/home/max/Projects/RTOS-exec-test/build/my_executable_name", "my_executable_name", "2", NULL); // except this replaces the whole process with the executable
-
-		printf("Give me the program path and number of steps: ");
-
-		char *program_name = argv[1];
-        char *arg1 = argc > 2 ? argv[2] : NULL;  // First argument for the child program, if provided
-        res = execl(program_name, program_name, arg1, NULL);
-
-		if(res < 0) {
-			printf("error in running the child program\n");
-			exit(EXIT_FAILURE);
-		}
-	} else {
-		printf("parent pid = %d\n", getpid());
-
-		for(i = 1; i <= 3; i++) {
-			printf("Parent - step %d\n", i);
-			sleep(1);
-		}
-
-		fork_pid = wait(&status);
-		printf("parent process pid = %d finished\n", getpid());
+	for(i = 0; i < 5; i++) {
+		waitpid(fork_pid[i], &status, 0);
 	}
+	printf("parent process pid = %d finished\n", getpid());
+
 	printf("proces pid = %d finished working, status = %d\n", getpid(), status);
 
 	return 0;

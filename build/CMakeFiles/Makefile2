@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/Projects/RTOS-Labs
+CMAKE_SOURCE_DIR = /home/max/Projects/RTOS-Labs
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/Projects/RTOS-Labs/build
+CMAKE_BINARY_DIR = /home/max/Projects/RTOS-Labs/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/my_executable_name.dir/clean
 CMakeFiles/my_executable_name.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/my_executable_name.dir/build.make CMakeFiles/my_executable_name.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/my_executable_name.dir/build.make CMakeFiles/my_executable_name.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ubuntu/Projects/RTOS-Labs/build/CMakeFiles --progress-num=1,2 "Built target my_executable_name"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/max/Projects/RTOS-Labs/build/CMakeFiles --progress-num=1,2 "Built target my_executable_name"
 .PHONY : CMakeFiles/my_executable_name.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/my_executable_name.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/Projects/RTOS-Labs/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/max/Projects/RTOS-Labs/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/my_executable_name.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/Projects/RTOS-Labs/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/max/Projects/RTOS-Labs/build/CMakeFiles 0
 .PHONY : CMakeFiles/my_executable_name.dir/rule
 
 # Convenience name for target.

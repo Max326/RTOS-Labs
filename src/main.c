@@ -1,4 +1,4 @@
-// lab4 assignment 3
+// lab4 assignment 4
 
 #include <sched.h>
 #include <signal.h>
@@ -7,6 +7,19 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+void child_work(int index,int t[])
+{
+    printf("Hi from child, pid = %d, ppid = %d\n", getpid(), getppid());
+
+    for (int i = 0; i < 5; i++)
+    {
+        printf("i: %d, c: %d, pid: %d, ppid: %d\n",index,t[i],getpid(),getppid());
+        sleep(1);
+    }
+    exit(index);
+}
+
 
 int main(int argc, char *argv[]) {
 	int t[] = {10, 5, 3, 8, 9};

@@ -3,35 +3,57 @@
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define CHILD  4
-#define PARENT 8
-
 int main(int argc, char *argv[]) {
-	int fork_pid;
+	int fork_pid, fork_pid2, fork_pid3, fork_pid4;
 	int i, j;
+	int status, status2, status3, status4;
 
 	fork_pid = fork();
 
-	if(fork_pid == 1) {
-		perror("M: sie nie udao\n");
+	if(fork_pid == -1) {
+		perror("P: sie nie udao\n");
 	} else if(fork_pid == 0) {
-		printf("\tP: potomny pid= %d\n", getpid());
-		for(j = 0; j < CHILD; j++) {
-			printf("\tP: pracuje %d sekund ...\n", j);
-			sleep(1);
+		printf("\tR1: potomny pid = %d, macierzysty - P = %d\n", getpid(), getppid());
+		fork_pid2 = fork();
+
+		if(fork_pid2 == -1) {
+			perror("\tR1: sie nie udao\n");
+		} else if(fork_pid2 == 0) {
+			printf("\t\tS1: potomny pid = %d, macierzysty - R1 = %d\n", getpid(), getppid());
+		} else {
+			fork_pid2 = wait(&status2);
 		}
-		printf("loop ended");
 	} else {
-		printf("M: proces macierzysty pid = %d\n", getpid());
-		printf("M: moj potomny pid = %d\n", fork_pid);
-		for(i = 0; i < PARENT; i++) {
-			printf("M: pracuje %d sek ...\n", i);
-			sleep(1);
+		printf("P: proces macierzysty pid = %d\n", getpid());
+
+		fork_pid3 = fork();
+
+		if(fork_pid3 == -1) {
+			perror("P: sie nie udalo stworzyc R2\n");
+		} else if(fork_pid3 == 0) {
+			printf("\tR2: potomny pid = %d, macierzysty - P %d\n", getpid(), getppid());
+
+			fork_pid4 = fork();
+
+			if(fork_pid4 == -1) {
+				perror("R2: sie nie udalo stworzyc S2\n");
+			} else if(fork_pid4 == 0) {
+				printf("\t\tS2: potomny pid = %d, macierzysty - R2 = %d\n", getpid(), getppid());
+			} else{
+				fork_pid4 = wait(&status4);
+			}
+		} else{
+			fork_pid3 = wait(&status3);
 		}
-		printf("qniec lupa\n");
+
+		printf("P: Czekam na potomny ...\n");
+		fork_pid = wait(&status);
+
+		printf("P: Proces potomny PID = %d zakonczony; status : %d\n", fork_pid, WEXITSTATUS(status));
 	}
 	printf(" Proces PID = %d konczy prace \n", getpid());
 
